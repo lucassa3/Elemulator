@@ -14,19 +14,23 @@ public class MainController {
 		ROM rom = new ROM();
 		RAM ram = new RAM();
 		CPU cpu = new CPU();
-		Scanner s = new Scanner(new File("teste3.txt"));
-		int current_line = 0;
+		Scanner s = new Scanner(new File("teste4.txt"));
 		
-		while (s.hasNext()){
-			rom.setSelectedInstruction(s.next(), current_line);
-			current_line++;
-		}
-		s.close();
+		
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				Screen screen;
 				try {
+					int current_line = 0;
+					
+					
+					while (s.hasNext()){
+						rom.setSelectedInstruction(s.next(), current_line);
+						current_line++;
+					}
+					s.close();
+					
 					screen = new Screen(ram);
 					JFrame frame = new JFrame("Portas Logicas");
 	                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,8 +39,15 @@ public class MainController {
 	                frame.pack();
 	                frame.setVisible(true);
 	                
-	                int commands = 0;
-	        		while (commands < 1000) {
+	                String s = "";
+	        		
+	        		for (int i = cpu.getPcOut().length-1; i>=0; i--) {
+	        			if (cpu.getPcOut()[i] == false) s+='0';
+	              	  	else if (cpu.getPcOut()[i] == true) s+='1';
+	        		}
+	        		int pc_value = Integer.parseInt(s, 2);
+	                
+	        		while (pc_value+1 <= current_line) {
 	        			
 	        			//---------------------------------
 	        			System.out.println("Instrução:");
@@ -51,20 +62,24 @@ public class MainController {
 	        			ram.setSelectedValue(cpu.getOutM(), cpu.getAddressM(), cpu.isWriteM());
 	        			
 	        			System.out.println("");
-	        			System.out.println("");
-	        			commands++;
-	        			screen.setRam(ram);
-	        			screen.repaint();
+	        			System.out.println("");	 
+	        			
+	        			String sa = "";
+		        		
+		        		for (int i = cpu.getPcOut().length-1; i>=0; i--) {
+		        			if (cpu.getPcOut()[i] == false) sa+='0';
+		              	  	else if (cpu.getPcOut()[i] == true) sa+='1';
+		        		}
+		        		pc_value = Integer.parseInt(sa, 2);
 	        		}
 	        		
+	        		screen.setRam(ram);
+        			screen.repaint();
+	        		
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
             }
 		});
-		
-		
-		
 	}
 }
