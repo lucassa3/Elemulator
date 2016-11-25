@@ -20,7 +20,7 @@ public class RAM {
         return this.ram[decIndex].getRegister();
     }
 
-    public void setSelectedValue(boolean[] register, boolean[] index, boolean load) {
+    public void setSelectedValue(boolean[] register, boolean[] index, boolean load) { //o q vc quer gaurdar, onde e confirma
         int decIndex = converter.booleanToInt(index);
 
         if (load) {
