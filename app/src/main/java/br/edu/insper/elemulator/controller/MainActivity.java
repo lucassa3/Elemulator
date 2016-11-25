@@ -6,22 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 import br.edu.insper.elemulator.R;
-import br.edu.insper.elemulator.model.CPU;
-import br.edu.insper.elemulator.model.RAM;
-import br.edu.insper.elemulator.model.ROM;
 import br.edu.insper.elemulator.util.Converter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
-    Button button;
+    Button runAllBtn, runBtn;
     TextView regA, regD, valueM;
 
     @Override
@@ -30,71 +22,49 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button);
+        runAllBtn = (Button) findViewById(R.id.runall);
+        runBtn = (Button) findViewById(R.id.run);
+
         regA = (TextView) findViewById(R.id.rega);
         regD = (TextView) findViewById(R.id.regd);
         valueM = (TextView) findViewById(R.id.valuem);
 
-
-
-        final ROM rom = new ROM();
-        final RAM ram = new RAM();
-        final CPU cpu = new CPU();
+        final Hack hack;
         final Converter converter = new Converter();
+        try {
+            hack = new Hack(getAssets().open("teste2.txt"));
 
+            runAllBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    hack.execute();
 
+                    int a = converter.booleanToInt(hack.cpu.registerA.getRegister());
+                    regA.setText(Integer.toString(a));
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                int current_line = 0;
-                try {
-
-                    Scanner s = new Scanner(getAssets().open("teste2.txt"));
-
-
-                    while (s.hasNext()){
-                        boolean[] instruction = converter.stringToBoolean(s.next());
-                        rom.setSelectedInstruction(instruction, current_line);
-                        current_line++;
-                    }
-                    s.close();
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    int d = converter.booleanToInt(hack.cpu.registerD.getRegister());
+                    regD.setText(Integer.toString(d));
                 }
+            });
 
-                int pc_value = converter.booleanToInt(cpu.getPcOut());
-                int oi = 0;
-                while (oi <= 1410) {
+            runBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    hack.singleExecute();
 
-                    //---------------------------------
-                    System.out.println("Instrução:");
-                    for (int i = 15; i>=0;i--) {
-                        if (rom.getSelectedInstruction(cpu.getPcOut())[i]) System.out.print("1");
-                        else System.out.print("0");
-                    }
-                    System.out.println("");
-                    //---------------------------------
+                    int a = converter.booleanToInt(hack.cpu.registerA.getRegister());
+                    regA.setText(Integer.toString(a));
 
-                    cpu.execute(ram.getSelectedValue(cpu.getAddressM()), rom.getSelectedInstruction(cpu.getPcOut()), false);
-                    ram.setSelectedValue(cpu.getOutM(), cpu.getAddressM(), cpu.isWriteM());
+                    int d = converter.booleanToInt(hack.cpu.registerD.getRegister());
+                    regD.setText(Integer.toString(d));
 
-                    //regA.setText(converter.booleanToInt(cpu.registerA.getRegister()));
-                    //regD.setText(converter.booleanToInt(cpu.registerD.getRegister()));
+                    int m = converter.booleanToInt(hack.cpu.getOutM());
+                    valueM.setText(Integer.toString(m));
 
-                    System.out.println("");
-                    System.out.println("");
-                    oi++;
-                    pc_value = converter.booleanToInt(cpu.getPcOut());
                 }
-            }
-        });
+            });
 
-
-
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
-
-
 }
