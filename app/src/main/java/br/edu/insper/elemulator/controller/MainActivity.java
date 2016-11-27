@@ -21,7 +21,7 @@ import br.edu.insper.elemulator.util.Converter;
 
 public class MainActivity extends AppCompatActivity{
 
-    Button runAllBtn, runBtn, kbdBtn;
+    Button runAllBtn, runBtn, kbdBtn, resetBtn, pauseBtn;
     TextView regA, regD, valueM;
     EditText keyboard;
     ListView fileList;
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        pauseBtn = (Button) findViewById(R.id.pause_btn);
+        resetBtn = (Button) findViewById(R.id.reset_btn);
         kbdBtn  = (Button) findViewById(R.id.kbd_btn);
         fileList = (ListView) findViewById(R.id.file_list);
         keyboard = (EditText) findViewById(R.id.keyboard); //passo 2
@@ -79,75 +81,73 @@ public class MainActivity extends AppCompatActivity{
 
 
 
+
         try {
+            hack = new Hack(getAssets().open("teste2.txt"));
            /* List<String> files = getListFileNames(new File("/"));
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, files);
             fileList.setAdapter(adapter);*/
 
+            final Handler mHandler = new Handler() {
+                public void handleMessage(Message msg) {
+                    regA.setText(String.valueOf(converter.booleanToInt(hack.cpu.registerA.getRegister())));
+                    regD.setText(String.valueOf(converter.booleanToInt(hack.cpu.registerD.getRegister())));
+                    valueM.setText(String.valueOf(converter.booleanToInt(hack.cpu.getOutM())));
+                }
+            };
 
-            hack = new Hack(getAssets().open("teste2.txt"));
-
-
-            final IntTest a = new IntTest();
-            final IntTest d = new IntTest();
-            final IntTest m = new IntTest();
+            final Thread thread = new Thread(){
+                public void run(){
+                    while (!Thread.currentThread().isInterrupted()) {
+                        try {
+                            if (hack.pc_value <= hack.current_line-1) {
+                                hack.execute();
+                                mHandler.obtainMessage(1).sendToTarget();
+                            }
+                            sleep(300);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    if (hack.pc_value <= hack.current_line-1) {
+                        hack.execute();
+                        mHandler.obtainMessage(1).sendToTarget();
+                    }
+                }
+            };
 
 
 
             runAllBtn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
-
-                    final Handler mHandler = new Handler() {
-                        public void handleMessage(Message msg) {
-                            regA.setText(Integer.toString(a.getInteger()));
-                            regD.setText(Integer.toString(d.getInteger()));
-                            valueM.setText(Integer.toString(m.getInteger()));
-                        }
-                    };
-
-                    final Thread thread = new Thread(){
-                        public void run(){
-                            while (hack.pc_value <= hack.current_line-1) {
-                                hack.execute();
-
-                                a.setInteger(converter.booleanToInt(hack.cpu.registerA.getRegister()));
-                                d.setInteger(converter.booleanToInt(hack.cpu.registerD.getRegister()));
-                                m.setInteger(converter.booleanToInt(hack.cpu.getOutM()));
-
-
-                                mHandler.obtainMessage(1).sendToTarget();
-
-                                System.out.println(converter.booleanToInt(hack.ram.getSelectedValue(converter.intToBoolean(256))));
-                                System.out.println(converter.booleanToInt(hack.ram.getSelectedValue(converter.intToBoolean(256))));
-                                System.out.println(converter.booleanToInt(hack.ram.getSelectedValue(converter.intToBoolean(256))));
-
-                                try {
-                                    sleep(300);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    };
                     thread.start();
                 }
             });
 
-
-
             runBtn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
-
-                    int a = converter.booleanToInt(hack.cpu.registerA.getRegister());
-                    regA.setText(Integer.toString(a));
-
-                    int d = converter.booleanToInt(hack.cpu.registerD.getRegister());
-                    regD.setText(Integer.toString(d));
-
-                    int m = converter.booleanToInt(hack.cpu.getOutM());
-                    valueM.setText(Integer.toString(m));
+                    hack.execute();
+                    mHandler.obtainMessage(1).sendToTarget();
                 }
             });
+
+            pauseBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    if (thread.isInterrupted()) {thread.resume();}
+                    else thread.interrupt();
+                }
+            });
+
+            resetBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                   hack.reset = true;
+
+                }
+            });
+
+
+
+
 
 
             kbdBtn.setOnClickListener(new View.OnClickListener() {

@@ -15,7 +15,7 @@ public class ProgramCounter extends Register{
     }
 
     private void reset () {
-        for  (int i = 0; i<= register.length; i++) {
+        for  (int i = 0; i< register.length; i++) {
             register[i] = false;
         }
     }
