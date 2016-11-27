@@ -16,6 +16,7 @@ public class Hack extends AppCompatActivity {
     CPU cpu;
     Converter converter;
     int current_line;
+    int pc_value;
 
     public Hack(InputStream file) {
         this.ram = new RAM();
@@ -39,9 +40,7 @@ public class Hack extends AppCompatActivity {
     }
 
     public void execute() {
-        int pc_value = converter.booleanToInt(cpu.getPcOut());
-        while (pc_value <= current_line-1) {
-
+        pc_value = converter.booleanToInt(cpu.getPcOut());
             //---------------------------------
             System.out.println("Instrução:");
             for (int i = 15; i>=0;i--) {
@@ -57,31 +56,8 @@ public class Hack extends AppCompatActivity {
             System.out.println(" ");
             System.out.println(" ");
             pc_value = converter.booleanToInt(cpu.getPcOut());
-        }
     }
 
-
-    public void singleExecute() {
-        int pc_value = converter.booleanToInt(cpu.getPcOut());
-        if (pc_value <= current_line-1) {
-
-            //---------------------------------
-            System.out.println("Instrução:");
-            for (int i = 15; i >= 0; i--) {
-                if (rom.getSelectedInstruction(cpu.getPcOut())[i]) System.out.print("1");
-                else System.out.print("0");
-            }
-            System.out.println("");
-            //---------------------------------
-
-            cpu.execute(ram.getSelectedValue(cpu.getAddressM()), rom.getSelectedInstruction(cpu.getPcOut()), false);
-            ram.setSelectedValue(cpu.getOutM(), cpu.getAddressM(), cpu.isWriteM());
-
-            System.out.println(" ");
-            System.out.println(" ");
-            pc_value = converter.booleanToInt(cpu.getPcOut());
-        }
-    }
 
 
 }

@@ -9,13 +9,13 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="br.edu.insper.elemulator.controller.MainActivity">
+    tools:context="br.edu.insper.elemulator.controller.MainActivity"
+    android:background="@android:color/darker_gray">
 
     <RelativeLayout
         android:id="@+id/Canvas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_alignParentTop="true">
 
         <LinearLayout
@@ -23,80 +23,120 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_alignParentTop="true"
-            android:id="@+id/ll2"
             android:layout_centerHorizontal="true">
 
             <ListView
+                android:id="@+id/file_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/file_list"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/ll1"
-            android:layout_below="@id/ll2"
-            android:layout_alignParentStart="true">
+                android:layout_height="80dp"
+                android:visibility="gone"/>
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:id="@+id/keyboard"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="LabelFor"
+                android:background="@android:color/background_light" />
+
+            <Button
+                android:id="@+id/kbd_btn"
+                android:text="Send to RAM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </RelativeLayout>
 
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/Others"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/Canvas"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/Canvas">
+        android:layout_alignParentBottom="true">
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/regd"
-            android:layout_alignEnd="@+id/regd"
-            android:layout_marginTop="37dp"
-            android:id="@+id/valuem" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center">
 
-        <Button
-            android:text="Run"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/run"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            <Button
+                android:id="@+id/run_all"
+                android:text="@string/run_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_orange_dark"/>
 
-        <Button
-            android:text="Run All"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/runall"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/run" />
+            <Button
+                android:id="@+id/run"
+                android:text="@string/run"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_green_dark"/>
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/regd"
-            android:layout_alignBottom="@+id/runall"
-            android:layout_alignStart="@+id/rega"
-            android:layout_alignParentTop="true" />
+            <Button
+                android:id="@+id/reset"
+                android:text="@string/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_red_light"/>
+        </LinearLayout>
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/rega"
-            android:layout_below="@+id/runall"
-            android:layout_centerHorizontal="true" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll">
+
+            <ListView
+                android:id="@+id/rom_view"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_light" />
+
+            <ListView
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/background_light" />
+
+            <TextView
+                android:id="@+id/rega"
+                android:hint="Register A"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_centerVertical="true"
+                android:layout_alignStart="@+id/valuem" />
+
+            <TextView
+                android:id="@+id/valuem"
+                android:hint="ALU Out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_above="@+id/rega"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="44dp" />
+
+            <TextView
+                android:id="@+id/regd"
+                android:hint="Register D"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_marginTop="38dp"
+                android:layout_below="@+id/rega"
+                android:layout_alignStart="@+id/rega" />
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>
