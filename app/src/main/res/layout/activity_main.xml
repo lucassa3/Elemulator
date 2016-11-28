@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:id="@+id/canvas_view">
 
             <ListView
                 android:id="@+id/file_list"
@@ -106,14 +107,15 @@
                 android:id="@+id/rom_view"
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
-                android:background="@android:color/background_light" />
+                android:background="@android:color/white"/>
 
             <ListView
+                android:id="@+id/ram_view"
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:background="@android:color/background_light" />
+                android:background="@android:color/white" />
 
             <TextView
                 android:id="@+id/rega"

@@ -1,5 +1,7 @@
 package br.edu.insper.elemulator.controller;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,8 +27,9 @@ public class MainActivity extends AppCompatActivity{
     Button runAllBtn, runBtn, kbdBtn, resetBtn, pauseBtn;
     TextView regA, regD, valueM;
     EditText keyboard;
-    ListView fileList;
+    ListView ramView, romView;
     ArrayAdapter adapter;
+    LinearLayout ll;
 
 
     /*private List<File> getListFiles(File parentDir) {
@@ -67,15 +71,21 @@ public class MainActivity extends AppCompatActivity{
         pauseBtn = (Button) findViewById(R.id.pause_btn);
         resetBtn = (Button) findViewById(R.id.reset_btn);
         kbdBtn  = (Button) findViewById(R.id.kbd_btn);
-        fileList = (ListView) findViewById(R.id.file_list);
+        ramView = (ListView) findViewById(R.id.ram_view);
+        romView = (ListView) findViewById(R.id.rom_view);
         keyboard = (EditText) findViewById(R.id.keyboard); //passo 2
         runAllBtn = (Button) findViewById(R.id.run_all);
         runBtn = (Button) findViewById(R.id.run);
         regA = (TextView) findViewById(R.id.rega);
         regD = (TextView) findViewById(R.id.regd);
         valueM = (TextView) findViewById(R.id.valuem);
+        ll = (LinearLayout) findViewById(R.id.canvas_view);
+
+
+
 
         final Hack hack;
+
         final Converter converter = new Converter();
 
 
@@ -84,34 +94,62 @@ public class MainActivity extends AppCompatActivity{
 
         try {
             hack = new Hack(getAssets().open("teste2.txt"));
+            final Screen screen = new Screen(this, hack.ram);
+
+            Bitmap result = Bitmap.createBitmap(512, 256, Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(result);
+            screen.draw(canvas);
+            screen.setLayoutParams(new LinearLayout.LayoutParams(512, 256));
+            ll.addView(screen);
+
            /* List<String> files = getListFileNames(new File("/"));
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, files);
             fileList.setAdapter(adapter);*/
 
             final Handler mHandler = new Handler() {
+
                 public void handleMessage(Message msg) {
-                    regA.setText(String.valueOf(converter.booleanToInt(hack.cpu.registerA.getRegister())));
+                    regA.setText(String.valueOf(converter.booleanToInt(hack.cpu.registerA.getRegister()))); //passo 3
                     regD.setText(String.valueOf(converter.booleanToInt(hack.cpu.registerD.getRegister())));
                     valueM.setText(String.valueOf(converter.booleanToInt(hack.cpu.getOutM())));
+
+                    List<String> listaRam = new ArrayList<String>(); //passo 4
+                    for (int i = 0; i<=9; i++) {
+                        boolean[] index = converter.intToBoolean(converter.booleanToInt(hack.cpu.getAddressM())+i);
+                        listaRam.add(converter.booleanToInt(index)+ " : " + String.valueOf(converter.booleanToInt(hack.ram.getSelectedValue(index))));
+
+                    }
+                    adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_view, android.R.id.text1, listaRam);
+                    ramView.setAdapter(adapter);
+
+                    List<String> listaRom = new ArrayList<String>(); //passo 5
+                    for (int j = 0; j<=9; j++) {
+                        boolean[] index = converter.intToBoolean(converter.booleanToInt(hack.cpu.getPcOut())+j);
+                        if (converter.booleanToInt(index) <= hack.current_line-1)
+                        listaRom.add(converter.booleanToInt(index)+ " : " + String.valueOf(converter.booleanToInt(hack.rom.getSelectedInstruction(index))));
+                    }
+                    adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_view, android.R.id.text1, listaRom);
+                    romView.setAdapter(adapter);
+
+                    screen.draw(canvas);
+
+
                 }
+
             };
 
-            final Thread thread = new Thread(){
+            final Thread thread = new Thread(){ //passo 1
                 public void run(){
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
                             if (hack.pc_value <= hack.current_line-1) {
                                 hack.execute();
-                                mHandler.obtainMessage(1).sendToTarget();
+                                mHandler.obtainMessage(1).sendToTarget(); //passo 2
                             }
-                            sleep(300);
+                            sleep(150);
                         } catch (InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
-                    }
-                    if (hack.pc_value <= hack.current_line-1) {
-                        hack.execute();
-                        mHandler.obtainMessage(1).sendToTarget();
                     }
                 }
             };
@@ -133,7 +171,7 @@ public class MainActivity extends AppCompatActivity{
 
             pauseBtn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
-                    if (thread.isInterrupted()) {thread.resume();}
+                    if (thread.isInterrupted()) {thread.run();}
                     else thread.interrupt();
                 }
             });
@@ -144,9 +182,6 @@ public class MainActivity extends AppCompatActivity{
 
                 }
             });
-
-
-
 
 
 
@@ -163,15 +198,8 @@ public class MainActivity extends AppCompatActivity{
                 }
             });
 
-
-
-
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
