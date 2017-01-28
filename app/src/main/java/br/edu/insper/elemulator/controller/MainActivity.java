@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_main);
         pauseBtn = (Button) findViewById(R.id.pause_btn);
         resetBtn = (Button) findViewById(R.id.reset_btn);
@@ -84,21 +85,22 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-        final Hack hack;
-
-        final Converter converter = new Converter();
-
-
 
 
 
         try {
-            hack = new Hack(getAssets().open("teste2.txt"));
-            final Screen screen = new Screen(this, hack.ram);
+            final Screen screen = new Screen(this);
+            final DisplayDriver dd = new DisplayDriver(screen);
+            final Hack hack = new Hack(getAssets().open("teste4.txt"), dd);
+            final Converter converter = new Converter();
+
+
+
 
             Bitmap result = Bitmap.createBitmap(512, 256, Bitmap.Config.ARGB_8888);
-            final Canvas canvas = new Canvas(result);
-            screen.draw(canvas);
+            screen.invalidate();
+            //final Canvas canvas = new Canvas(result);
+            //screen.draw(canvas);
             screen.setLayoutParams(new LinearLayout.LayoutParams(512, 256));
             ll.addView(screen);
 
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity{
                     valueM.setText(String.valueOf(converter.booleanToInt(hack.cpu.getOutM())));
 
                     List<String> listaRam = new ArrayList<String>(); //passo 4
-                    for (int i = 0; i<=9; i++) {
+                    for (int i = 0; i<=20; i++) {
                         boolean[] index = converter.intToBoolean(converter.booleanToInt(hack.cpu.getAddressM())+i);
                         listaRam.add(converter.booleanToInt(index)+ " : " + String.valueOf(converter.booleanToInt(hack.ram.getSelectedValue(index))));
 
@@ -123,15 +125,15 @@ public class MainActivity extends AppCompatActivity{
                     ramView.setAdapter(adapter);
 
                     List<String> listaRom = new ArrayList<String>(); //passo 5
-                    for (int j = 0; j<=9; j++) {
+                    for (int j = 0; j<=20; j++) {
                         boolean[] index = converter.intToBoolean(converter.booleanToInt(hack.cpu.getPcOut())+j);
                         if (converter.booleanToInt(index) <= hack.current_line-1)
                         listaRom.add(converter.booleanToInt(index)+ " : " + String.valueOf(converter.booleanToInt(hack.rom.getSelectedInstruction(index))));
                     }
                     adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_view, android.R.id.text1, listaRom);
                     romView.setAdapter(adapter);
+                    screen.invalidate();
 
-                    screen.draw(canvas);
 
 
                 }

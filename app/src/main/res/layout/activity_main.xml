@@ -106,25 +106,17 @@
             <ListView
                 android:id="@+id/rom_view"
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="370dp"
+                android:layout_alignParentBottom="true"
                 android:background="@android:color/white"/>
 
             <ListView
                 android:id="@+id/ram_view"
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
+                android:layout_height="370dp"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:background="@android:color/white" />
-
-            <TextView
-                android:id="@+id/rega"
-                android:hint="Register A"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:layout_centerVertical="true"
-                android:layout_alignStart="@+id/valuem" />
 
             <TextView
                 android:id="@+id/valuem"
@@ -137,14 +129,65 @@
                 android:layout_marginBottom="44dp" />
 
             <TextView
+                android:text="Register A"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/rega"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/textView2" />
+
+            <TextView
+                android:text="ALU Out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:layout_above="@+id/valuem"
+                android:layout_alignStart="@+id/textView2" />
+
+            <TextView
+                android:text="Register D"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="31dp"
+                android:id="@+id/textView3"
+                android:layout_below="@+id/rega"
+                android:layout_alignStart="@+id/textView2" />
+
+            <TextView
                 android:id="@+id/regd"
                 android:hint="Register D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
-                android:layout_marginTop="38dp"
-                android:layout_below="@+id/rega"
+                android:layout_below="@+id/textView3"
                 android:layout_alignStart="@+id/rega" />
+
+            <TextView
+                android:id="@+id/rega"
+                android:hint="Register A"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:text="ROM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"
+                android:id="@+id/textView4"
+                android:layout_alignEnd="@+id/rom_view" />
+
+            <TextView
+                android:text="RAM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ll"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="44dp"
+                android:id="@+id/textView5" />
 
         </RelativeLayout>
 

@@ -1,14 +1,17 @@
 package br.edu.insper.elemulator.model;
 
+import br.edu.insper.elemulator.controller.DisplayDriver;
 import br.edu.insper.elemulator.util.Converter;
 
 public class RAM {
     private Register[] ram;
     private Converter converter = new Converter();
+    private DisplayDriver displayDriver;
 
-    public RAM () {
+    public RAM (DisplayDriver displayDriver) {
         this.ram = new Register[32768];
         this.ram[0] = new Register();
+        this.displayDriver = displayDriver;
     }
 
     public boolean[] getSelectedValue (boolean[] index) {
@@ -27,15 +30,10 @@ public class RAM {
             System.out.println("guardando na memoria na posicao: " + decIndex);
             if (this.ram[decIndex] == null) this.ram[decIndex] = new Register();
             this.ram[decIndex].loadRegister(register, load);
+            if (converter.booleanToInt(index) >= 16384) {
+                displayDriver.update(register, index);
+            }
         }
-    }
-
-    public boolean[] getSelectedValueInt(int index) {
-        if (this.ram[index] == null) {
-            this.ram[index] = new Register();
-        }
-
-        return this.ram[index].getRegister();
     }
 
 

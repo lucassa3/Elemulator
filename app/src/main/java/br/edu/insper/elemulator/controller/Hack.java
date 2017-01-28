@@ -13,16 +13,14 @@ import br.edu.insper.elemulator.util.Converter;
 public class Hack extends AppCompatActivity {
     boolean reset;
     RAM ram;
-
-
     ROM rom;
     CPU cpu;
     Converter converter;
     int current_line;
     int pc_value;
 
-    public Hack(InputStream file) {
-        this.ram = new RAM();
+    public Hack(InputStream file, DisplayDriver dd) {
+        this.ram = new RAM(dd);
         this.rom = new ROM();
         this.cpu = new CPU();
         this.converter = new Converter();
