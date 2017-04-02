@@ -40,7 +40,6 @@ public class CPU {
         this.writeM = id.isLoadM();
 
 
-        registerA.loadRegister(mux.execute(alu.getOut(), instruction, id.isMuxIOsel()), id.isLoadA());
         this.addressM = registerA.getRegister();
 
         //---------------------------------
@@ -56,6 +55,7 @@ public class CPU {
         alu.execute(registerD.getRegister(), muxAM, id.isZx(), id.isNx(), id.isZy(), id.isNy(), id.isF(), id.isNo());
         this.outM = alu.getOut();
 
+        registerA.loadRegister(mux.execute(alu.getOut(), instruction, id.isMuxIOsel()), id.isLoadA());
         //---------------------------------
         System.out.println("valor do REG-A:");
         for (int i = 15; i>=0;i--) {

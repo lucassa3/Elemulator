@@ -21,13 +21,17 @@ public class InstruDec {
     }
 
     public void executeJump(boolean[] instruction, boolean zr, boolean ng) {
-        tempA = instruction[2] && zr;
-        tempB = instruction[1] && ng;
-        tempC = tempA || tempB;
-        tempD = (!zr) && (!ng);
-        tempE = instruction[0] && tempD;
+        boolean loadPC1, loadPC2, loadPC3, nng, nzr, gt;
 
-        loadPC = (tempC || tempE) && instruction[15];
+        nng = !ng;
+        nzr = !zr;
+        gt = nng && nzr;
+        
+        loadPC1 = gt && instruction[0];
+        loadPC2 = zr && instruction[1];
+        loadPC3 = ng && instruction[2];
+        
+        loadPC = (loadPC1 || loadPC2 || loadPC3) && instruction[15];
     }
     public boolean isMuxIOsel() {
         return muxIOsel;
